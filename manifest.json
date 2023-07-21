@@ -15,5 +15,5 @@
     "service_worker": "background.js"
   },
   "host_permissions": ["https://developer.chrome.com/*"],
-  "permissions": ["tabGroups", "tabs", "alarms"]
+  "permissions": ["tabGroups", "tabs", "alarms", "storage"]
 }

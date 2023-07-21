@@ -12,10 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Calculate the time until 8:00 PM
+const buttonTime = document.getElementById('time');
+const input = document.getElementById('timeInput');
+let p = document.createElement("p");
+p.style['font-size'] = '20px';
+p.style.margin = '10px';
+buttonTime.addEventListener('click', () => {
+  const now = new Date();
+  const then = new Date(now);
+
+  const time = input.value;
+  p.textContent = 'Tabs will be removed at ' + time;
+  buttonTime.after(p);
+
+  then.setHours(Number(time.split(':')[0]), Number(time.split(':')[1]), 0, 0); //
+  console.log(now);
+  console.log(then);
+
+  if (now.getTime() > then.getTime()) {
+    then.setDate(now.getDate() + 1); // If it's past 8:00 PM, schedule for next day
+  }
+  const delayInMinutes = (then.getTime() - now.getTime()) / (1000 * 60);
+  console.log(delayInMinutes);
+  // Create the alarm
+  chrome.alarms.create('closeTabs', { when: Date.now() + delayInMinutes * 60 * 1000 });
+})
+
 const tabs = await chrome.tabs.query({
   url: [
-    'https://developer.chrome.com/docs/webstore/*',
-    'https://developer.chrome.com/docs/extensions/*'
+    // 'https://developer.chrome.com/docs/webstore/*',
+    // 'https://developer.chrome.com/docs/extensions/*'
+    'https://www.youtube.com/*'
   ]
 });
 
@@ -43,11 +71,11 @@ for (const tab of tabs) {
 }
 document.querySelector('ul').append(...elements);
 
-const button = document.querySelector('button');
-button.addEventListener('click', async () => {
+//const button = document.querySelector('button');
+buttonTime.addEventListener('click', async () => {
   const tabIds = tabs.map(({ id }) => id);
   if (tabIds.length) {
     const group = await chrome.tabs.group({ tabIds });
-    await chrome.tabGroups.update(group, { title: 'DOCS' });
+    await chrome.tabGroups.update(group, { title: '⏰' });
   }
 });
